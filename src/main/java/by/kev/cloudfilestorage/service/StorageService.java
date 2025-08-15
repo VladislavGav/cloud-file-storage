@@ -106,6 +106,9 @@ public class StorageService {
 
         List<Item> items = folderService.getDirectoryObjects(fullPath);
 
-        return items.stream().map(mapper::toResourceResponseDTO).collect(Collectors.toList());
+        return items.stream()
+                .filter(item -> !item.objectName().equals(fullPath))
+                .map(mapper::toResourceResponseDTO)
+                .collect(Collectors.toList());
     }
 }
