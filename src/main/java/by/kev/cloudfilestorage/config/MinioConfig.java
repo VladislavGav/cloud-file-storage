@@ -31,6 +31,7 @@ public class MinioConfig {
         boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
                 .bucket(minioProperties.getBucket())
                 .build());
+
         if (!found) {
             minioClient.makeBucket(MakeBucketArgs.builder()
                     .bucket(minioProperties.getBucket())

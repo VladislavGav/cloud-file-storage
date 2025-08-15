@@ -76,7 +76,7 @@ public class StorageService {
 
         service.move(fullOldPath, fullNewPath);
 
-        return mapper.toResourceResponseDTO(newPath, resourceMetadata.size());
+        return mapper.toResourceResponseDTO(fullNewPath, resourceMetadata.size());
     }
 
     public InputStream download(String path, Long userId) {
@@ -104,11 +104,29 @@ public class StorageService {
         if (!folderService.doesObjectExist(fullPath))
             throw new ResourceNotFoundException("Folder doesn't exist");
 
-        List<Item> items = folderService.getDirectoryObjects(fullPath);
+        List<Item> items = folderService.getDirectoryObjects(fullPath, false);
 
         return items.stream()
                 .filter(item -> !item.objectName().equals(fullPath))
                 .map(mapper::toResourceResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<ResourceResponseDTO> searchResources(String query, Long userId) {
+        String rootPath = PathUtil.getPathWithRoot("", userId);
+        List<Item> items = folderService.getDirectoryObjects(rootPath, true);
+        List<ResourceResponseDTO> result = new ArrayList<>();
+
+        for (Item item : items) {
+            String itemName = PathUtil.getResourceName(item.objectName());
+
+            if (itemName.contains(query))
+                result.add(mapper.toResourceResponseDTO(item));
+        }
+
+        if (result.isEmpty())
+            throw new ResourceNotFoundException("Resource not found");
+
+        return result;
     }
 }

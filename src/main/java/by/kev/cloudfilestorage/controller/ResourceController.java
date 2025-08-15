@@ -75,4 +75,13 @@ public class ResourceController {
 
         return ResponseEntity.ok(resultResource);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ResourceResponseDTO>> searchResource(@RequestParam(name = "query") String query,
+                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        List<ResourceResponseDTO> resources = storageService.searchResources(query, userDetails.getUser().getId());
+
+        return ResponseEntity.ok(resources);
+    }
 }

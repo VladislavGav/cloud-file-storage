@@ -92,10 +92,10 @@ public class FolderService extends MinioService {
         }
     }
 
-    public List<Item> getDirectoryObjects(String path) {
+    public List<Item> getDirectoryObjects(String path, boolean recursive) {
         try {
             List<Item> items = new ArrayList<>();
-            Iterable<Result<Item>> results = getListObjects(path, false);
+            Iterable<Result<Item>> results = getListObjects(path, recursive);
 
             for (Result<Item> result : results) {
                 items.add(result.get());
