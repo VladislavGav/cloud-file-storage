@@ -3,6 +3,8 @@ package by.kev.cloudfilestorage.controller;
 import by.kev.cloudfilestorage.dto.ResourceResponseDTO;
 import by.kev.cloudfilestorage.security.UserDetailsImpl;
 import by.kev.cloudfilestorage.service.StorageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +16,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/directory")
+@Tag(name = "Directory Controller", description = "Directory API")
 public class DirectoryController {
 
     private final StorageService storageService;
 
+    @Operation(summary = "Get information about the contents of a folder")
     @GetMapping
     public ResponseEntity<List<ResourceResponseDTO>> getDirectoryContent(@RequestParam(name = "path") String path,
                                                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -27,6 +31,7 @@ public class DirectoryController {
         return ResponseEntity.ok(resources);
     }
 
+    @Operation(summary = "Create an empty folder")
     @PostMapping
     public ResponseEntity<ResourceResponseDTO> createDirectory(@RequestParam(name = "path") String path,
                                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {

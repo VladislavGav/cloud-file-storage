@@ -71,7 +71,7 @@ public class FolderService extends MinioService {
                 }
             }
         } catch (Exception e) {
-            throw new MinioServiceException("Failed to download folder: " + path);
+            throw new MinioServiceException("Failed to download folder");
         }
 
         return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
@@ -79,7 +79,7 @@ public class FolderService extends MinioService {
 
     public ObjectWriteResponse createEmptyDirectory(String path) {
         if (doesObjectExist(path))
-            throw new ResourceAlreadyExistException("Folder already exists: " + path);
+            throw new ResourceAlreadyExistException("Folder already exists");
 
         try {
             return minioClient.putObject(PutObjectArgs.builder()
@@ -88,7 +88,7 @@ public class FolderService extends MinioService {
                     .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
                     .build());
         } catch (Exception e) {
-            throw new MinioServiceException("Failed to create empty folder: " + path);
+            throw new MinioServiceException("Failed to create empty folder");
         }
     }
 

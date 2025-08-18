@@ -43,7 +43,7 @@ public class FileService extends MinioService {
         try {
             return getFileStream(path);
         } catch (Exception e) {
-            throw new MinioServiceException("Failed to download file: " + path);
+            throw new MinioServiceException("Failed to download file");
         }
     }
 }

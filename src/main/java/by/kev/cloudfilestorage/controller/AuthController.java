@@ -3,6 +3,7 @@ package by.kev.cloudfilestorage.controller;
 import by.kev.cloudfilestorage.dto.UserRequestDTO;
 import by.kev.cloudfilestorage.dto.UserResponseDTO;
 import by.kev.cloudfilestorage.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth Controller", description = "Auth API")
 public class AuthController {
 
     private final AuthService authService;
