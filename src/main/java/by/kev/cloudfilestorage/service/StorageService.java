@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -109,7 +108,7 @@ public class StorageService {
         return items.stream()
                 .filter(item -> !item.objectName().equals(fullPath))
                 .map(mapper::toResourceResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<ResourceResponseDTO> searchResources(String query, Long userId) {

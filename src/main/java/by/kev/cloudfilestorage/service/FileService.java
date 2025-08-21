@@ -2,8 +2,8 @@ package by.kev.cloudfilestorage.service;
 
 import by.kev.cloudfilestorage.config.properties.MinioProperties;
 import by.kev.cloudfilestorage.exception.MinioServiceException;
-import io.minio.*;
-import lombok.SneakyThrows;
+import io.minio.MinioClient;
+import io.minio.StatObjectArgs;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;

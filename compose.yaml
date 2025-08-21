@@ -13,6 +13,8 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - cloud_network
 
   minio:
     image: minio/minio:latest
@@ -26,4 +28,40 @@ services:
       - "9000:9000"
     volumes:
       - minio-data:/data
+    networks:
+      - cloud_network
 
+  backend:
+    build:
+      context: .
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - MINIO_URL=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_BUCKET=${MINIO_BUCKET}
+    depends_on:
+      - postgres
+      - minio
+    networks:
+      - cloud_network
+
+  frontend:
+    build:
+      context: ./cloud-frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - cloud_network
+
+networks:
+  cloud_network:
