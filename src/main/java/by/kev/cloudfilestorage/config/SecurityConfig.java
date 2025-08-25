@@ -39,6 +39,16 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**")
                         .permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/config.js",
+                                "/assets/**",
+                                "/login",
+                                "/registration",
+                                "/files/**",
+                                "/favicon.ico"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
@@ -58,6 +68,7 @@ public class SecurityConfig {
 
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost",
+                "http://localhost:3000",
                 "http://localhost:80",
                 "http://frontend",
                 "http://frontend:80"
@@ -66,6 +77,7 @@ public class SecurityConfig {
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
 
