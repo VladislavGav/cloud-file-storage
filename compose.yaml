@@ -1,7 +1,3 @@
-volumes:
-  pgdata:
-  minio-data:
-
 services:
   postgres:
     image: postgres:latest
@@ -34,6 +30,17 @@ services:
     networks:
       - cloud_network
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - cloud_network
+
   backend:
     build:
       context: .
@@ -48,9 +55,12 @@ services:
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
       - MINIO_BUCKET=${MINIO_BUCKET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - postgres
       - minio
+      - redis
     networks:
       - cloud_network
 
@@ -65,6 +75,11 @@ services:
       - backend
     networks:
       - cloud_network
+
+volumes:
+  pgdata:
+  minio-data:
+  redis-data:
 
 networks:
   cloud_network:
