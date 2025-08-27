@@ -4,6 +4,7 @@ import by.kev.cloudfilestorage.Util.PathUtil;
 import by.kev.cloudfilestorage.config.properties.MinioProperties;
 import by.kev.cloudfilestorage.exception.MinioServiceException;
 import by.kev.cloudfilestorage.exception.ResourceAlreadyExistException;
+import by.kev.cloudfilestorage.exception.ResourceNotFoundException;
 import io.minio.*;
 import io.minio.messages.Item;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,11 @@ public class FolderService extends MinioService {
     }
 
     public ObjectWriteResponse createEmptyDirectory(String path) {
+        String parentPath = PathUtil.getResourcePathWithoutName(path);
+
+        if (!doesObjectExist(parentPath))
+            throw new ResourceNotFoundException("Parent folder doesn't exist");
+
         if (doesObjectExist(path))
             throw new ResourceAlreadyExistException("Folder already exists");
 

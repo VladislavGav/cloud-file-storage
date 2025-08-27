@@ -82,6 +82,9 @@ public class StorageService {
         MinioService service = minioServiceFactory.getServiceForPath(path);
         String fullPath = PathUtil.getPathWithRoot(path, userId);
 
+        if (!service.doesObjectExist(fullPath))
+            throw new ResourceNotFoundException("Resource not found in path: " + path);
+
         return service.getResourceStream(fullPath);
     }
 
