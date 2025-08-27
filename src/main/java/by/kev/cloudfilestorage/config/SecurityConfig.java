@@ -1,7 +1,9 @@
 package by.kev.cloudfilestorage.config;
 
+import by.kev.cloudfilestorage.security.RestAuthenticationEntryPoint;
 import by.kev.cloudfilestorage.service.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,13 +22,12 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,24 +41,26 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**")
                         .permitAll()
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/config.js",
-                                "/assets/**",
-                                "/login",
-                                "/registration",
-                                "/files/**",
-                                "/favicon.ico"
-                        ).permitAll()
                         .anyRequest().authenticated())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/sign-out")
                         .clearAuthentication(true)
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_NO_CONTENT))
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            if (authentication == null || !authentication.isAuthenticated()) {
+                                restAuthenticationEntryPoint.commence(request, response, null);
+                            } else {
+                                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                            }
+                        })
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
                 );
 
         return http.build();
@@ -72,7 +76,6 @@ public class SecurityConfig {
                 "http://localhost:80",
                 "http://frontend",
                 "http://frontend:80"
-
         ));
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
