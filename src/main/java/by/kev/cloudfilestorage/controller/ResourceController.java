@@ -106,7 +106,6 @@ public class ResourceController {
                                                                     @NotEmpty(message = ValidationConstants.FILES_NOT_EMPTY)
                                                                     MultipartFile[] files,
                                                                     @RequestParam(name = "path")
-                                                                    @NotBlank(message = ValidationConstants.PATH_NOT_EMPTY)
                                                                     @Pattern(regexp = ValidationConstants.PATH_REGEX,
                                                                             message = ValidationConstants.PATH_INVALID)
                                                                     String path,

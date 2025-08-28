@@ -50,7 +50,7 @@ public class StorageService {
             MinioService service = minioServiceFactory.getServiceForPath(fullPath);
 
             if (service.doesObjectExist(fullPath))
-                throw new ResourceAlreadyExistException("Resource already exists: " + fullPath);
+                throw new ResourceAlreadyExistException("Resource already exists");
 
             ObjectWriteResponse response = service.uploadFile(fullPath, file);
 
