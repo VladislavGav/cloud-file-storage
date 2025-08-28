@@ -17,5 +17,6 @@ public final class ValidationConstants {
     /**
      * Symbols are prohibited: \ : * ? " < > |
      */
-    public static final String PATH_REGEX = "^[^\\\\:*?\"<>|]+$";
+    public static final String PATH_REGEX = "^$|^[^\\\\:*?\"<>|]+$";
+
 }

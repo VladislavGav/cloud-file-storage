@@ -24,10 +24,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final AuthenticationManager authManager;
-
+    private final FolderService folderService;
 
     @Transactional
-    public UserResponseDTO register(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO register(UserRequestDTO userRequestDTO, HttpSession session) {
         User user = userMapper.toUser(userRequestDTO);
 
         if (userRepository.findByUsername(user.getUsername()).isPresent())
@@ -35,19 +35,29 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        folderService.createRootDirectory(savedUser.getId());
+
+        authenticateAndSetSession(userRequestDTO.username(), userRequestDTO.password(), session);
 
         return userMapper.toUserResponseDTO(user);
     }
 
     public UserResponseDTO login(UserRequestDTO userRequestDTO, HttpSession session) {
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userRequestDTO.username(), userRequestDTO.password()));
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(authentication);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+        authenticateAndSetSession(userRequestDTO.username(), userRequestDTO.password(), session);
 
         return userMapper.toUserResponseDTO(userRequestDTO);
+    }
+
+    private void authenticateAndSetSession(String username, String rawPassword, HttpSession session) {
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, rawPassword)
+        );
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+
+        SecurityContextHolder.setContext(context);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", context);
     }
 }

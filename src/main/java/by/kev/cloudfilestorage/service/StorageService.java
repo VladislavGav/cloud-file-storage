@@ -122,7 +122,7 @@ public class StorageService {
         for (Item item : items) {
             String itemName = PathUtil.getResourceName(item.objectName());
 
-            if (itemName.contains(query))
+            if (itemName.contains(query) && !item.objectName().equals(rootPath))
                 result.add(mapper.toResourceResponseDTO(item));
         }
 

@@ -21,22 +21,22 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserResponseDTO> signUp(@RequestBody @Valid UserRequestDTO userRequestDTO) {
+    public ResponseEntity<UserResponseDTO> signUp(@RequestBody @Valid UserRequestDTO userRequestDTO,
+                                                  HttpSession session) {
 
-        UserResponseDTO userResponseDTO = authService.register(userRequestDTO);
+        UserResponseDTO userResponseDTO = authService.register(userRequestDTO, session);
 
         return ResponseEntity.created(URI.create("api/user/me")).body(userResponseDTO);
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<UserResponseDTO> signIn(@RequestBody @Valid UserRequestDTO userRequestDTO, HttpSession session) {
+    public ResponseEntity<UserResponseDTO> signIn(@RequestBody @Valid UserRequestDTO userRequestDTO,
+                                                  HttpSession session) {
 
         UserResponseDTO userResponseDTO = authService.login(userRequestDTO, session);
 
         return ResponseEntity.ok(userResponseDTO);
     }
-
-
 
 
 }

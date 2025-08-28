@@ -20,7 +20,6 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class FolderService extends MinioService {
 
-
     public FolderService(MinioClient minioClient, MinioProperties minioProperties) {
         super(minioClient, minioProperties);
     }
@@ -76,6 +75,20 @@ public class FolderService extends MinioService {
         }
 
         return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+    }
+
+    public void createRootDirectory(Long userId) {
+        String rootPath = PathUtil.getPathWithRoot("", userId);
+
+        try {
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(minioProperties.getBucket())
+                    .object(rootPath)
+                    .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
+                    .build());
+        } catch (Exception e) {
+            throw new MinioServiceException("Failed to create root folder");
+        }
     }
 
     public ObjectWriteResponse createEmptyDirectory(String path) {
