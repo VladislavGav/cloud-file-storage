@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ErrorResponseDTO> handleMaxSizeException(MaxUploadSizeExceededException e) {
+    public ResponseEntity<ErrorResponseDTO> handleMaxSizeException() {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponseDTO("Uploaded file exceeds the maximum allowed size"));

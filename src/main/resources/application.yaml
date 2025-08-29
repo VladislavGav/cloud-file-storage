@@ -22,6 +22,7 @@ spring:
 
   servlet:
     multipart:
+      enabled: true
       max-file-size: 20MB
       max-request-size: 20MB
 
@@ -30,3 +31,9 @@ minio:
   url: ${MINIO_URL}
   access-key: ${MINIO_ACCESS_KEY}
   secret-key: ${MINIO_SECRET_KEY}
+
+logging:
+  level:
+    root: INFO
+    by.kev.cloudfilestorage: DEBUG
+
