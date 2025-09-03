@@ -60,9 +60,7 @@ services:
       - cloud_network
 
   frontend:
-    build:
-      context: ./cloud-frontend
-      dockerfile: Dockerfile
+    image: fflavian/cloud-frontend:latest
     container_name: frontend
     ports:
       - "3000:80"
