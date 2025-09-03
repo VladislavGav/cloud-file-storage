@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -63,8 +64,9 @@ public class AuthServiceIT {
     @DisplayName("Test register")
     public void testRegister() {
         UserRequestDTO userRequestDTO = new UserRequestDTO("testUsername", "testPassword");
+        MockHttpSession session = new MockHttpSession();
 
-        UserResponseDTO userResponseDTO = authService.register(userRequestDTO);
+        UserResponseDTO userResponseDTO = authService.register(userRequestDTO, session);
 
         assertEquals("testUsername", userResponseDTO.username());
         assertTrue(userRepository.findByUsername("testUsername").isPresent());
@@ -74,10 +76,11 @@ public class AuthServiceIT {
     @DisplayName("Test register with throws UserExistException")
     public void testRegister_ExistingUser_ThrowsUserExistException() {
         UserRequestDTO userRequestDTO = new UserRequestDTO("test_username", "test_password");
+        MockHttpSession session = new MockHttpSession();
 
-        authService.register(userRequestDTO);
+        authService.register(userRequestDTO, session);
 
-        assertThrows(UserExistException.class, () -> authService.register(userRequestDTO));
+        assertThrows(UserExistException.class, () -> authService.register(userRequestDTO, session));
     }
 
 }
