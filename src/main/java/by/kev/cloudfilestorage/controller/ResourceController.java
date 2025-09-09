@@ -101,10 +101,11 @@ public class ResourceController {
             @ApiResponse(responseCode = "409", description = "Resource already exists",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @PostMapping
-    public ResponseEntity<List<ResourceResponseDTO>> uploadResource(@RequestParam(name = "object")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<ResourceResponseDTO>> uploadResource(@RequestPart(name = "object")
                                                                     @NotEmpty(message = ValidationConstants.FILES_NOT_EMPTY)
                                                                     MultipartFile[] files,
+                                                                    @Parameter(example = "folder/")
                                                                     @RequestParam(name = "path")
                                                                     @Pattern(regexp = ValidationConstants.PATH_REGEX,
                                                                             message = ValidationConstants.PATH_INVALID)

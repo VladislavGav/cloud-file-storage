@@ -6,7 +6,9 @@ import by.kev.cloudfilestorage.exception.MinioServiceException;
 import by.kev.cloudfilestorage.exception.ResourceAlreadyExistException;
 import by.kev.cloudfilestorage.exception.ResourceNotFoundException;
 import io.minio.*;
+import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -133,5 +135,22 @@ public class FolderService extends MinioService {
                 .prefix(path)
                 .recursive(recursive)
                 .build());
+    }
+
+    @Override
+    @SneakyThrows
+    public void delete(String path) {
+        List<Item> items = getDirectoryObjects(path, true);
+        List<DeleteObject> deleteObjectList = items.stream()
+                .map(item -> new DeleteObject(item.objectName()))
+                .toList();
+
+        minioClient.removeObjects(RemoveObjectsArgs
+                        .builder()
+                        .bucket(minioProperties.getBucket())
+                        .objects(deleteObjectList)
+                        .build())
+                .forEach(del -> {
+                });
     }
 }

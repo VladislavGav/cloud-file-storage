@@ -3,16 +3,12 @@ package by.kev.cloudfilestorage.service;
 import by.kev.cloudfilestorage.config.properties.MinioProperties;
 import by.kev.cloudfilestorage.exception.MinioServiceException;
 import io.minio.*;
-import io.minio.errors.*;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor
 public abstract class MinioService {
@@ -55,15 +51,6 @@ public abstract class MinioService {
         );
     }
 
-    @SneakyThrows
-    public void delete(String path) {
-        minioClient.removeObject(RemoveObjectArgs.builder()
-                .bucket(minioProperties.getBucket())
-                .object(path)
-                .build()
-        );
-    }
-
     public StatObjectResponse getResourceMetadata(String path) {
         try {
             return minioClient.statObject(StatObjectArgs.builder()
@@ -74,6 +61,8 @@ public abstract class MinioService {
             throw new MinioServiceException("Failed to get metadata of resource");
         }
     }
+
+    public abstract void delete(String path);
 
     public abstract boolean doesObjectExist(String path);
 

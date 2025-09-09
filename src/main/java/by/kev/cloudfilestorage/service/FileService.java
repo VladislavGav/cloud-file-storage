@@ -3,7 +3,9 @@ package by.kev.cloudfilestorage.service;
 import by.kev.cloudfilestorage.config.properties.MinioProperties;
 import by.kev.cloudfilestorage.exception.MinioServiceException;
 import io.minio.MinioClient;
+import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -23,6 +25,17 @@ public class FileService extends MinioService {
         } catch (Exception e) {
             throw new MinioServiceException("Failed to move or rename resource");
         }
+    }
+
+    @Override
+    @SneakyThrows
+    public void delete(String path) {
+        minioClient.removeObject(RemoveObjectArgs
+                .builder()
+                .bucket(minioProperties.getBucket())
+                .object(path)
+                .build()
+        );
     }
 
     @Override
